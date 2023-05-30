@@ -23,18 +23,22 @@ userRouter.post("/signup", async (req, res) => {
           console.log(err);
           return res.send({ "message": "SignUp failed, please try again" });
         }
+        else{
+            const user = new UserModel({
+                email,
+                password: hashedPassword,
+                name,
+                age
+              });
+              await user.save();
+              console.log(user);
+              res.send({ "message": "Registered Successfully" });
+        }
   
-        const user = new UserModel({
-          email,
-          password: hashedPassword,
-          name,
-          age
-        });
-        await user.save();
-        console.log(user);
-        res.send({ "message": "Registered Successfully" });
+       
       });
-    } catch (err) {
+    } 
+    catch (err) {
       console.log(err);
       res.send({ "message": "SignUp failed, please try again" });
     }
