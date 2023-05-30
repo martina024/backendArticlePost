@@ -10,7 +10,7 @@ const userRouter=express.Router()
 
    
 
-userRouter.post("/register" , async(req,res)=>{
+userRouter.post("/signup" , async(req,res)=>{
     const {email,password,name,age}=req.body
    
     try{

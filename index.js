@@ -20,12 +20,12 @@ app.get("/",(req,res)=>{
 })
 
 // app.use(userValidator)
-app.use("/user", userRouter)
+app.use("/", userRouter)
 
 
 
 app.use(authenticate)
-app.use("/", articleRouter)
+app.use("/users", articleRouter)
 
 
 

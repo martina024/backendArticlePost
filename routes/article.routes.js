@@ -57,7 +57,7 @@ articleRouter.get("/articles", authenticate, async (req, res) => {
 });
 
 // API to update user profile (name and age)
-articleRouter.patch("/users/:userId", authenticate, async (req, res) => {
+articleRouter.patch("/:userId", authenticate, async (req, res) => {
 const { userId }=req.params;
 const { name, age }=req.body;
 
