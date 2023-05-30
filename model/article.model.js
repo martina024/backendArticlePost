@@ -1,15 +1,19 @@
-const mongoose=require("mongoose")
+const mongoose = require("mongoose");
 
-const articleSchema=mongoose.Schema({
-    "title":String,
-    "body":String,
-     "userID":String
-   
-},{
-    versionKey:false
-}
-)
+const articleSchema = mongoose.Schema(
+  {
+    title: String,
+    body: String,
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
+    },
+  },
+  {
+    versionKey: false,
+  }
+);
 
-const ArticleModel = mongoose.model("article",articleSchema)
+const ArticleModel = mongoose.model("article", articleSchema);
 
-module.exports={ArticleModel}
+module.exports = { ArticleModel };
