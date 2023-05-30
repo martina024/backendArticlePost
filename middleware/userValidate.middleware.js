@@ -1,11 +1,10 @@
 const userValidator=(req,res,next)=>{
-    if(req.url=="/register"){
-     if(req.body.name && req.body.email && req.body.password && req.body.gender && req.body.phoneNumber ){
+    if(req.url=="/signup"){
+     if(req.body.name && req.body.email && req.body.password && req.body.age){
         if(typeof req.body.name==="string" &&
         typeof req.body.email==="string" &&
         typeof req.body.password==="string" &&
-        typeof req.body.gender==="string" &&
-        typeof req.body.phoneNumber=="number" )
+        typeof req.body.age=="number" )
         {
 
             next()

@@ -9,7 +9,7 @@ const userRouter=express.Router()
 
 
 userRouter.post("/signup" , async(req,res)=>{
-    const {email,password,name,gender,phoneNumber}=req.body
+    const {email,password,name,age}=req.body
 
     const userEmail=await UserModel.findOne({email})
 
@@ -23,7 +23,7 @@ userRouter.post("/signup" , async(req,res)=>{
                 if(err){
                     console.log(err)
                 }else{
-                        const user = new UserModel({email,password:secure_password,name,gender,phoneNumber})
+                        const user = new UserModel({email,password:secure_password,name,age})
                         await user.save()
                         console.log(user)
                             res.send({"message" :"Registered Successfully"})

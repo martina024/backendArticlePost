@@ -25,7 +25,7 @@ app.use("/", userRouter)
 
 
 app.use(authenticate)
-app.use("/articles", articleRouter)
+app.use("/", articleRouter)
 
 
 

@@ -1,84 +1,76 @@
-const express=require("express")
-const { ArticleModel } = require("../model/article.model")
+const express=require("express");
+const { ArticleModel }=require("../model/article.model");
+const { UserModel }=require("../model/user.model");
+const jwt=require('jsonwebtoken');
+require("dotenv").config();
 
-const articleRouter=express.Router()
+const articleRouter=express.Router();
 
-articleRouter.get("/",async(req,res)=>{
-    // console.log(req.query);
-    
-       
-        try{
-        
-            const articles=await ArticleModel.find()
-            res.send(articles)
-        }
-        catch(err){
-            console.log(err)
-            res.send({"message":"Something went wrong"})
-        }
-    
-   
-   
-  
-})
-
-
-articleRouter.post("/post",async(req,res)=>{
-    const payload=req.body
-    try{
-        const new_article=new ArticleModel(payload)
-        await new_article.save()
-        res.send({"message":"Added the article",new_article})
-
-    }catch(err){
-        console.log(err)
-        res.send({"message":"Something went wrong"})
+// Middleware to authenticate the user
+const authenticate=(req, res, next)=>{
+const token=req.headers.authorization;
+    if (token){
+    const decodedToken=jwt.verify(token, process.env.key);
+    if (decodedToken){
+    const userID=decodedToken.userID;
+    req.body.userID=userID;
+    next();
     }
-    
-})
-
-
-articleRouter.patch("/update/:id",async(req,res)=>{
-    const ID=req.params.id
-    const payload=req.body
-  
-    try{
-       
-       const article=await ArticleModel.findByIdAndUpdate({_id:ID},payload)
-        res.send({"message":"Updated the article",article})
-        
-    }catch(err){
-        console.log(err)
-        res.send({"message":"Something went wrong"})
+     else {
+    res.send({ "message": "Please login first" });
     }
-   
-})
-
-
-
-articleRouter.delete("/delete/:id",async(req,res)=>{
-    const ID=req.params.id
-   
-   
-    try{
-        await ArticleModel.findByIdAndDelete({_id:ID})
-        res.send({"message":"Deleted the article"})
-
-    }catch(err){
-        console.log(err)
-        res.send({"message":"Something went wrong"})
     }
-    
-   
-})
+     else {
+    res.send({ "message": "Please login first" });
+    }
+}
 
+// API to create an Article
+articleRouter.post("/:userId/articles", authenticate, async (req, res) => {
+const {userId}=req.params;
+const payload=req.body;
+    try {
+    const user=await UserModel.findById(userId);
+    if (!user) {
+    return res.send({ "message": "User not found" });
+    }
+    payload.user=userId;
+    const new_article=new ArticleModel(payload);
+    await new_article.save();
+    res.send({ "message": "Added the article", new_article });
 
+    } catch (err) {
+    console.log(err);
+    res.send({ "message": "Something went wrong" });
+    }
+});
 
+// API to get all articles
+articleRouter.get("/articles", authenticate, async (req, res) => {
+    try {
+    const articles=await ArticleModel.find().populate('user', 'name age');
+    res.send(articles);
+    } catch (err) {
+    console.log(err);
+    res.send({ "message": "Something went wrong" });
+    }
+});
 
+// API to update user profile (name and age)
+articleRouter.patch("/users/:userId", authenticate, async (req, res) => {
+const { userId }=req.params;
+const { name, age }=req.body;
 
+    try {
+    const user=await UserModel.findByIdAndUpdate(userId, { name, age }, { new: true });
+    if (!user) {
+    return res.send({ "message": "User not found" });
+    }
+    res.send({ "message": "Updated user profile", user });
+    } catch (err) {
+    console.log(err);
+    res.send({ "message": "Something went wrong" });
+    }
+});
 
-
-module.exports={articleRouter}
-
-
-
+module.exports={articleRouter};
