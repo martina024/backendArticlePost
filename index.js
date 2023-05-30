@@ -19,7 +19,7 @@ app.get("/",(req,res)=>{
     res.send("Welcome to ArticlePosting")
 })
 
-app.use(userValidator)
+// app.use(userValidator)
 app.use("/user", userRouter)
 
 
