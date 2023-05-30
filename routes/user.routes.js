@@ -8,37 +8,38 @@ const { UserModel } = require("../model/user.model");
 const userRouter=express.Router()
 
 
-userRouter.post("/signup" , async(req,res)=>{
-    const {email,password,name,age}=req.body
-
-    const userEmail=await UserModel.findOne({email})
-
-    if(userEmail){
-        res.send({"message":"This Email is already registered"})
-    }
-    else{
-
-        try{
-            bcrypt.hash(password, 5, async(err, secure_password)=> {
-                if(err){
-                    console.log(err)
-                }else{
-                        const user = new UserModel({email,password:secure_password,name,age})
-                        await user.save()
-                        console.log(user)
-                            res.send({"message" :"Registered Successfully"})
-                 }
+userRouter.post("/signup", async (req, res) => {
+    const { email, password, name, age } = req.body;
+  
+    try {
+      const userEmail = await UserModel.findOne({ email });
+  
+      if (userEmail) {
+        return res.send({ "message": "This Email is already registered" });
+      }
+  
+      bcrypt.hash(password, 5, async (err, hashedPassword) => {
+        if (err) {
+          console.log(err);
+          return res.send({ "message": "SignUp failed, please try again" });
+        }
+  
+        const user = new UserModel({
+          email,
+          password: hashedPassword,
+          name,
+          age
         });
-           
-        }
-        catch(err){
-            console.log(err)
-            console.log({"message":"SignUp failed, please try again"})
-        }
+        await user.save();
+        console.log(user);
+        res.send({ "message": "Registered Successfully" });
+      });
+    } catch (err) {
+      console.log(err);
+      res.send({ "message": "SignUp failed, please try again" });
     }
-    
-
-})
+  });
+  
 
 
 userRouter.post("/login" , async(req,res)=>{
