@@ -7,7 +7,7 @@ const { UserModel } = require("../model/user.model");
 const userRouter=express.Router()
 
 
-userRouter.post("/register" , async(req,res)=>{
+userRouter.post("/signup" , async(req,res)=>{
     const {email,password,name,gender,phoneNumber}=req.body
 
     const userEmail=await UserModel.findOne({email})
