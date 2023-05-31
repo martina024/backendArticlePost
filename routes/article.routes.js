@@ -19,8 +19,7 @@ const token=req.headers.authorization;
      else {
     res.send({ "message": "Please login first" });
     }
-    }
-     else {
+    } else {
     res.send({ "message": "Please login first" });
     }
 }
@@ -29,48 +28,48 @@ const token=req.headers.authorization;
 articleRouter.post("/:userId/articles", authenticate, async (req, res) => {
 const {userId}=req.params;
 const payload=req.body;
-    try {
-    const user=await UserModel.findById(userId);
-    if (!user) {
-    return res.send({ "message": "User not found" });
-    }
-    payload.user=userId;
-    const new_article=new ArticleModel(payload);
-    await new_article.save();
-    res.send({ "message": "Added the article", new_article });
+try {
+const user=await UserModel.findById(userId);
+if (!user) {
+return res.send({ "message": "User not found" });
+}
+payload.user=userId;
+const new_article=new ArticleModel(payload);
+await new_article.save();
+res.send({ "message": "Added the article", new_article });
 
-    } catch (err) {
-    console.log(err);
-    res.send({ "message": "Something went wrong" });
-    }
+} catch (err) {
+console.log(err);
+res.send({ "message": "Something went wrong" });
+}
 });
 
 // API to get all articles
 articleRouter.get("/articles", authenticate, async (req, res) => {
-    try {
-    const articles=await ArticleModel.find().populate('user', 'name age');
-    res.send(articles);
-    } catch (err) {
-    console.log(err);
-    res.send({ "message": "Something went wrong" });
-    }
+try {
+const articles=await ArticleModel.find().populate('user', 'name age');
+res.send(articles);
+} catch (err) {
+console.log(err);
+res.send({ "message": "Something went wrong" });
+}
 });
 
 // API to update user profile (name and age)
-articleRouter.patch("/:userId", authenticate, async (req, res) => {
+articleRouter.patch("/users/:userId", authenticate, async (req, res) => {
 const { userId }=req.params;
 const { name, age }=req.body;
 
-    try {
-    const user=await UserModel.findByIdAndUpdate(userId, { name, age }, { new: true });
-    if (!user) {
-    return res.send({ "message": "User not found" });
-    }
-    res.send({ "message": "Updated user profile", user });
-    } catch (err) {
-    console.log(err);
-    res.send({ "message": "Something went wrong" });
-    }
+try {
+const user=await UserModel.findByIdAndUpdate(userId, { name, age }, { new: true });
+if (!user) {
+return res.send({ "message": "User not found" });
+}
+res.send({ "message": "Updated user profile", user });
+} catch (err) {
+console.log(err);
+res.send({ "message": "Something went wrong" });
+}
 });
 
 module.exports={articleRouter};
