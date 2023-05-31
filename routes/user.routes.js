@@ -12,24 +12,30 @@ const userRouter=express.Router()
 
 userRouter.post("/signup" , async(req,res)=>{
     const {email,password,name,age}=req.body
+    if(userEmail){
+        res.send({"message":"This Email is already registered"})
+    }
+    else{
+        try{
+            bcrypt.hash(password, 5, async(err, secure_password)=> {
+                if(err){
+                    console.log(err)
+                }else{
+                        const user = new UserModel({email,password:secure_password,name,age})
+                        await user.save()
+                        console.log(user)
+                            res.send({"message" :"Registered Successfully"})
+                 }
+        });
+           
+        }
+        catch(err){
+            console.log(err)
+            console.log({"message":"Something went wrong while Signup"})
+        }
+    }
    
-    try{
-        bcrypt.hash(password, 5, async(err, secure_password)=> {
-            if(err){
-                console.log(err)
-            }else{
-                    const user = new UserModel({email,password:secure_password,name,age})
-                    await user.save()
-                    console.log(user)
-                        res.send({"message" :"Registered"})
-             }
-    });
-       
-    }
-    catch(err){
-        console.log(err)
-        console.log({"message":"Something went wrong in registering"})
-    }
+
 })
 
 
@@ -50,16 +56,16 @@ userRouter.post("/login" , async(req,res)=>{
              
                 if(result){
                     const token=jwt.sign({userID:user[0]._id},process.env.key)
-                    res.send({"message" :"login successuful","token":token})
+                    res.send({"message" :"Login successuful","token":token})
                 }
                 else{
-                    res.send({"message" :"wrong credientials"})
+                    res.send({"message" :"Wrong credientials"})
                 }
             });
            
         }
         else{
-            res.send({"message" :"wrong credientials"})
+            res.send({"message" :"Wrong credientials"})
         }
        
         
