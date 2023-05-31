@@ -12,6 +12,7 @@ const userRouter=express.Router()
 
 userRouter.post("/signup" , async(req,res)=>{
     const {email,password,name,age}=req.body
+    const userEmail=await UserModel.findOne({email})
     if(userEmail){
         res.send({"message":"This Email is already registered"})
     }
